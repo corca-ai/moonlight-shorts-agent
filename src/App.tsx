@@ -229,9 +229,21 @@ function App() {
             </div>
             <span className="status-badge">
               <Check size={14} aria-hidden="true" />
-              짧은 단문
+              5비트+영상
             </span>
           </header>
+
+          <section className="output-contract" aria-label="생성 산출물">
+            <div>
+              <strong>이번 생성 결과</strong>
+              <span>대본과 제작 프롬프트가 한 컷에 같이 나옵니다.</span>
+            </div>
+            <ul>
+              <li>0.5초 훅 + 5비트 대본</li>
+              <li>컷별 GPT Image 2 프롬프트</li>
+              <li>컷별 Higgsfield 영상 프롬프트</li>
+            </ul>
+          </section>
 
           <section className="input-section">
             <div className="section-heading">
@@ -261,8 +273,8 @@ function App() {
           <section className="input-section">
             <div className="section-heading">
               <Image size={17} aria-hidden="true" />
-              <h2>GPT Image 2</h2>
-              <span>{keyStatus.openaiConfigured ? '.env OK' : '선택'}</span>
+              <h2>이미지/영상</h2>
+              <span>{keyStatus.openaiConfigured ? 'GPT OK' : 'prompt 기본'}</span>
             </div>
             <label className="check-row">
               <input
@@ -270,7 +282,7 @@ function App() {
                 onChange={(event) => setShouldGenerateImages(event.target.checked)}
                 type="checkbox"
               />
-              <span>대본과 함께 실제 이미지 생성</span>
+              <span>대본과 함께 실제 이미지까지 생성</span>
             </label>
             <label className="stacked-field">
               <span>OpenAI API Key</span>
@@ -287,7 +299,7 @@ function App() {
             <p className="field-note">
               {keyStatus.openaiConfigured
                 ? '.env에 OpenAI 키가 있어 입력하지 않아도 됩니다.'
-                : '키가 없으면 컷별 gpt-image-2 프롬프트까지만 보여줍니다.'}
+                : '키가 없어도 이미지 프롬프트와 영상 프롬프트는 같이 나옵니다.'}
             </p>
           </section>
 
@@ -407,7 +419,7 @@ function App() {
             disabled={!canGenerate || isGenerating}
           >
             <Wand2 size={18} aria-hidden="true" />
-            {isGenerating ? '생성 중' : '대본 생성'}
+            {isGenerating ? '생성 중' : '대본+프롬프트 생성'}
           </button>
         </aside>
 
@@ -547,10 +559,11 @@ function App() {
           ) : (
             <div className="empty-state">
               <Wand2 size={30} aria-hidden="true" />
-              <h2>키워드와 목표를 넣으면 바로 대본이 나옵니다</h2>
+              <h2>대본과 제작 프롬프트가 같이 나옵니다</h2>
               <p>
                 Claude Key를 넣고 문나이트 키워드를 고른 뒤, 이번 쇼츠가 해야
-                할 일을 적어주세요.
+                할 일을 적어주세요. 컷마다 대사, 자막, 이미지 프롬프트, 영상
+                프롬프트를 함께 만듭니다.
               </p>
             </div>
           )}
