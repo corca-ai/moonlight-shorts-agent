@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
-    "build": "tsc && vite build",
-    "test": "vitest run",
-    "preview": "vite preview --host 127.0.0.1"
+    "dev": "npx --no-install vite --host 127.0.0.1",
+    "build": "npx --no-install tsc && npx --no-install vite build",
+    "test": "npx --no-install vitest run",
+    "preview": "npx --no-install vite preview --host 127.0.0.1"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
