@@ -1,18 +1,33 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
-  plugins: [react(), claudeScriptApi()],
-  test: {
-    environment: 'node',
-    globals: true,
-  },
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+
+  return {
+    plugins: [react(), claudeScriptApi(env)],
+    test: {
+      environment: 'node',
+      globals: true,
+    },
+  };
 });
 
-function claudeScriptApi() {
+function claudeScriptApi(env: Record<string, string>) {
   return {
     name: 'claude-script-api',
     configureServer(server: any) {
+      server.middlewares.use('/api/key-status', async (req: any, res: any) => {
+        if (req.method !== 'GET') {
+          sendJson(res, 405, { error: 'METHOD_NOT_ALLOWED' });
+          return;
+        }
+
+        sendJson(res, 200, {
+          anthropicConfigured: Boolean(env.ANTHROPIC_API_KEY?.trim()),
+          openaiConfigured: Boolean(env.OPENAI_API_KEY?.trim()),
+        });
+      });
       server.middlewares.use('/api/claude-script', async (req: any, res: any) => {
         if (req.method !== 'POST') {
           sendJson(res, 405, { error: 'METHOD_NOT_ALLOWED' });
@@ -21,7 +36,9 @@ function claudeScriptApi() {
 
         try {
           const body = await readJsonBody(req);
-          const anthropicApiKey = String(body?.anthropicApiKey || '').trim();
+          const anthropicApiKey = String(
+            body?.anthropicApiKey || env.ANTHROPIC_API_KEY || '',
+          ).trim();
           const input = body?.input;
 
           if (!anthropicApiKey) {
@@ -53,7 +70,9 @@ function claudeScriptApi() {
 
         try {
           const body = await readJsonBody(req);
-          const openaiApiKey = String(body?.openaiApiKey || '').trim();
+          const openaiApiKey = String(
+            body?.openaiApiKey || env.OPENAI_API_KEY || '',
+          ).trim();
           const cuts = Array.isArray(body?.cuts) ? body.cuts : [];
 
           if (!openaiApiKey) {

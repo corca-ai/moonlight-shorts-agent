@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle,
   Check,
@@ -37,6 +37,10 @@ const defaultGoal =
   '문나이트 논문 리뷰 페이지를 더 많은 연구자와 마케터에게 알리고, 체험 문의로 이어지게 만들고 싶다.';
 
 function App() {
+  const [keyStatus, setKeyStatus] = useState({
+    anthropicConfigured: false,
+    openaiConfigured: false,
+  });
   const [anthropicApiKey, setAnthropicApiKey] = useState('');
   const [openaiApiKey, setOpenaiApiKey] = useState('');
   const [shouldGenerateImages, setShouldGenerateImages] = useState(false);
@@ -62,8 +66,42 @@ function App() {
     [keywords, selectedKeywordIds],
   );
 
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchKeyStatus() {
+      try {
+        const response = await fetch('/api/key-status');
+        const status = (await response.json()) as {
+          anthropicConfigured?: boolean;
+          openaiConfigured?: boolean;
+        };
+
+        if (!ignore) {
+          setKeyStatus({
+            anthropicConfigured: Boolean(status.anthropicConfigured),
+            openaiConfigured: Boolean(status.openaiConfigured),
+          });
+        }
+      } catch {
+        if (!ignore) {
+          setKeyStatus({
+            anthropicConfigured: false,
+            openaiConfigured: false,
+          });
+        }
+      }
+    }
+
+    void fetchKeyStatus();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   const canGenerate =
-    anthropicApiKey.trim().length > 0 &&
+    (keyStatus.anthropicConfigured || anthropicApiKey.trim().length > 0) &&
     selectedKeywordIds.length > 0 &&
     goal.trim().length > 0;
 
@@ -86,7 +124,10 @@ function App() {
       });
       setOutput(result);
 
-      if (shouldGenerateImages && openaiApiKey.trim()) {
+      if (
+        shouldGenerateImages &&
+        (keyStatus.openaiConfigured || openaiApiKey.trim())
+      ) {
         try {
           const cutsWithImages = await requestCutImages({
             cuts: result.cuts,
@@ -166,7 +207,7 @@ function App() {
             <div className="section-heading">
               <KeyRound size={17} aria-hidden="true" />
               <h2>Claude Key</h2>
-              <span>Opus 4.8</span>
+              <span>{keyStatus.anthropicConfigured ? '.env OK' : 'Opus 4.8'}</span>
             </div>
             <label className="stacked-field">
               <span>Anthropic API Key</span>
@@ -181,7 +222,9 @@ function App() {
               />
             </label>
             <p className="field-note">
-              키는 저장하지 않고 Claude 호출할 때만 씁니다.
+              {keyStatus.anthropicConfigured
+                ? '.env에 Claude 키가 있어 입력하지 않아도 됩니다.'
+                : '.env가 비어 있으면 여기 입력값을 요청에만 씁니다.'}
             </p>
           </section>
 
@@ -189,7 +232,7 @@ function App() {
             <div className="section-heading">
               <Image size={17} aria-hidden="true" />
               <h2>GPT Image 2</h2>
-              <span>선택</span>
+              <span>{keyStatus.openaiConfigured ? '.env OK' : '선택'}</span>
             </div>
             <label className="check-row">
               <input
@@ -212,7 +255,9 @@ function App() {
               />
             </label>
             <p className="field-note">
-              키가 없으면 컷별 gpt-image-2 프롬프트까지만 보여줍니다.
+              {keyStatus.openaiConfigured
+                ? '.env에 OpenAI 키가 있어 입력하지 않아도 됩니다.'
+                : '키가 없으면 컷별 gpt-image-2 프롬프트까지만 보여줍니다.'}
             </p>
           </section>
 

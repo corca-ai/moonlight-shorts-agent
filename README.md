@@ -9,6 +9,17 @@ npm install
 npm run dev
 ```
 
+## API 키
+
+로컬에서 `.env` 파일에 키를 넣으면 화면 입력 없이 사용할 수 있습니다.
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-your-claude-key
+OPENAI_API_KEY=sk-your-openai-key
+```
+
+`.env`는 `.gitignore`에 포함되어 GitHub에 올라가지 않습니다. 공개되는 예시는 `.env.example`만 사용하세요.
+
 ## 범위
 
 - Claude Opus 4.8(`claude-opus-4-8`) 기반 대본 생성
