@@ -8,13 +8,13 @@
 
 ```bash
 npm ci
-npx --no vite --host 127.0.0.1
+npx --no -- vite --host 127.0.0.1
 ```
 
 ```bash
-npx --no vitest run
-npx --no tsc
-npx --no vite build
+npx --no -- vitest run
+npx --no -- tsc
+npx --no -- vite build
 ```
 
 `npx --no`를 쓰면 설치되지 않은 패키지를 즉석 다운로드해 실행하지 않으므로, 우발적인 원격 실행을 피할 수 있습니다.
