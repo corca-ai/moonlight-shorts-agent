@@ -465,6 +465,16 @@ textarea:focus {
   font-weight: 900;
 }
 
+.cut-meta small {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #7c321c;
+  background: #fff0e8;
+  font-size: 11px;
+  font-weight: 900;
+}
+
 .cut-meta strong {
   line-height: 1.35;
 }
@@ -479,6 +489,11 @@ textarea:focus {
   line-height: 1.55;
 }
 
+.spoken-line {
+  font-size: 17px;
+  font-weight: 900;
+}
+
 .model-chip {
   justify-self: start;
   border-radius: 999px;
@@ -487,6 +502,11 @@ textarea:focus {
   background: #e8f7f2;
   font-size: 11px;
   font-weight: 900;
+}
+
+.model-chip.video {
+  color: #563783;
+  background: #f2ecff;
 }
 
 .generated-image {
@@ -513,6 +533,15 @@ textarea:focus {
   color: #26312d;
   background: #f4f2ed;
   font-size: 13px;
+}
+
+.prompt-text.video {
+  background: #f7f3ff;
+}
+
+.prompt-block {
+  display: grid;
+  gap: 6px;
 }
 
 .direction-text {

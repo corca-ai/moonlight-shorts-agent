@@ -24,48 +24,72 @@ const keywordCopy: Record<
     spoken: string;
     pain: string;
     image: string;
+    object: string;
   }
 > = {
   'ai-overview': {
     spoken: 'AI 요약',
-    pain: 'AI 요약에 안 뜨면, 없는 글 같아요.',
-    image: '검색창 위에 뜬 AI 요약 카드',
+    pain: 'AI 요약에 없으면, 없는 글이에요.',
+    image: 'an AI search overview card floating above search results',
+    object: 'AI search result card',
   },
   'paper-review': {
     spoken: '논문 리뷰',
-    pain: '논문 제목만 봐도 머리가 아파요.',
-    image: '논문 제목이 빽빽한 노트북 화면',
+    pain: '논문 제목만 봐도 지쳐요.',
+    image: 'a laptop filled with dense academic paper titles',
+    object: 'academic paper stack',
   },
   'research-fatigue': {
     spoken: '자료 찾기',
     pain: '찾다가 하루가 사라져요.',
-    image: '자료 탭이 너무 많이 열린 책상',
+    image: 'a desk with too many browser tabs and scattered notes',
+    object: 'overloaded research desk',
   },
   'trend-letter': {
     spoken: '트렌드',
-    pain: '유행은 빠른데, 정리는 느려요.',
-    image: '뉴스레터 문장이 카드처럼 떠 있는 화면',
+    pain: '유행은 빠른데, 정리는 늦어요.',
+    image: 'newsletter cards and trend headlines floating on a clean screen',
+    object: 'trend newsletter cards',
   },
   'b2b-lead': {
     spoken: '문의',
-    pain: '조회수만 많고 문의가 없으면 아깝죠.',
-    image: '조회수 숫자 옆에 비어 있는 문의함',
+    pain: '조회수만 높으면, 남는 게 없어요.',
+    image: 'a high view count beside an empty lead inbox',
+    object: 'empty lead inbox',
   },
   'shorts-hook': {
     spoken: '첫 1초',
-    pain: '첫 1초에 못 잡으면 그냥 넘어가요.',
-    image: '손가락이 영상을 넘기기 직전 멈춘 장면',
+    pain: '첫 1초를 놓치면 끝이에요.',
+    image: 'a thumb frozen right before swiping away a vertical video',
+    object: 'paused thumb over phone',
   },
   'competitor-volume': {
     spoken: '광고 소재',
-    pain: '남들은 이미 여러 개를 시험해요.',
-    image: '여러 광고 썸네일이 한 화면에 놓인 장면',
+    pain: '남들은 이미 열 개씩 시험해요.',
+    image: 'multiple ad thumbnails arranged like a testing board',
+    object: 'ad thumbnail testing board',
   },
   'human-tone': {
     spoken: '사람 말',
-    pain: 'AI 말투는 첫 줄에서 티가 나요.',
-    image: '딱딱한 문장이 빨간 펜으로 지워진 종이',
+    pain: 'AI 말투는 첫 줄에서 걸려요.',
+    image: 'a stiff sentence crossed out with a red pen on paper',
+    object: 'red-marked copy draft',
   },
+};
+
+const beatByDuration: Record<DurationOption, ScriptCut['beat'][]> = {
+  '15초': ['hook', 'problem', 'payoff', 'cta'],
+  '30초': ['hook', 'problem', 'insight', 'insight', 'payoff', 'cta'],
+  '45초': [
+    'hook',
+    'problem',
+    'problem',
+    'insight',
+    'insight',
+    'payoff',
+    'payoff',
+    'cta',
+  ],
 };
 
 const aiTellPatterns = [
@@ -159,14 +183,14 @@ function buildTitle(
   revisionMode: RevisionMode,
 ) {
   if (revisionMode === 'strong') {
-    return `스크롤을 멈추는 ${duration} 문나이트 쇼츠`;
+    return `${duration}, 그냥 넘기기 힘든 문나이트 쇼츠`;
   }
 
   if (revisionMode === 'b2b') {
-    return `문의까지 생각한 ${duration} 문나이트 쇼츠`;
+    return `${duration}, 문의까지 가는 문나이트 쇼츠`;
   }
 
-  return `${keywordLines[0].spoken}을 쉽게 찌르는 ${duration} 쇼츠`;
+  return `${keywordLines[0].spoken}을 멈추게 하는 ${duration} 쇼츠`;
 }
 
 function buildHook(
@@ -175,34 +199,34 @@ function buildHook(
   revisionMode: RevisionMode,
 ) {
   if (revisionMode === 'strong') {
-    return '그 검색어, 남이 먼저 잡습니다.';
+    return '그 키워드, 곧 뺏겨요.';
   }
 
   if (revisionMode === 'simple') {
-    return '검색했는데 더 헷갈리죠?';
+    return '찾았는데 더 헷갈리죠?';
   }
 
   if (revisionMode === 'b2b') {
-    return '조회수만 보면 문의를 놓쳐요.';
+    return '조회수만 보면 놓쳐요.';
   }
 
   if (revisionMode === 'softCta') {
-    return '좋은 자료도 그냥 지나쳐요.';
+    return '좋은 글도 그냥 지나가요.';
   }
 
   if (/문의|리드|상담|전환|체험/.test(goal)) {
-    return '조회수는 많은데 문의가 없나요?';
+    return '조회수만 높으면 위험해요.';
   }
 
   if (/논문|리뷰|연구/.test(goal)) {
-    return '논문 찾다 하루가 사라졌나요?';
+    return '논문 찾다 하루가 사라져요.';
   }
 
   if (/인지|알리|홍보/.test(goal)) {
-    return '좋은 서비스도 안 보이면 끝이에요.';
+    return '좋아도 안 보이면 끝이에요.';
   }
 
-  return `${keywordLines[0].spoken}, 첫 줄에서 잡아야 해요.`;
+  return `${keywordLines[0].spoken}, 첫 줄이 전부예요.`;
 }
 
 function buildCuts(
@@ -215,6 +239,7 @@ function buildCuts(
   const count = cutCountByDuration[input.duration];
   const totalSeconds = durationSeconds[input.duration];
   const secondsPerCut = Math.max(2, Math.round(totalSeconds / count));
+  const beats = beatByDuration[input.duration];
   const lines = buildLineSequence({
     count,
     hook,
@@ -234,6 +259,7 @@ function buildCuts(
 
     return {
       id: `cut-${index + 1}`,
+      beat: beats[index] ?? 'insight',
       seconds: `${start}-${end}s`,
       spokenLine,
       caption,
@@ -242,8 +268,17 @@ function buildCuts(
         caption,
         line: spokenLine,
         keyword: keywordLines[index % keywordLines.length],
+        seconds: end - start,
       }),
       imageModel: 'gpt-image-2',
+      videoPrompt: buildVideoPrompt({
+        index,
+        seconds: end - start,
+        line: spokenLine,
+        keyword: keywordLines[index % keywordLines.length],
+        beat: beats[index] ?? 'insight',
+      }),
+      videoModel: 'higgsfield',
       visualDirection: buildVisualDirection(index, count),
     };
   });
@@ -272,8 +307,8 @@ function buildLineSequence({
     buildTurnLine(third, revisionMode),
     buildMoonlightLine(revisionMode),
     leadCta,
-    '기억나는 글은 어렵지 않아요.',
-    '문나이트만 남기고 끝내요.',
+    '복잡한 말은 버리고, 한 장면만 남겨요.',
+    '끝나면 문나이트만 떠오르게 해요.',
   ];
 
   if (count === 4) {
@@ -289,11 +324,11 @@ function buildLineSequence({
 
 function buildProblemLine(keyword: KeywordLine, revisionMode: RevisionMode) {
   if (revisionMode === 'strong') {
-    return `${keyword.spoken}을 못 잡으면 바로 묻혀요.`;
+    return `${keyword.spoken}을 못 잡으면 묻혀요.`;
   }
 
   if (revisionMode === 'b2b') {
-    return '사람은 정보보다 답을 사요.';
+    return '사람은 정보 말고 답을 사요.';
   }
 
   return `${keyword.spoken}도 쉬워야 멈춰요.`;
@@ -305,7 +340,7 @@ function buildTurnLine(keyword: KeywordLine, revisionMode: RevisionMode) {
   }
 
   if (revisionMode === 'softCta') {
-    return '작게 궁금해야 끝까지 봐요.';
+    return '조금 궁금해야 끝까지 봐요.';
   }
 
   return `${keyword.spoken}, 한눈에 보여야 해요.`;
@@ -328,32 +363,75 @@ function buildImagePrompt({
   caption,
   line,
   keyword,
+  seconds,
 }: {
   index: number;
   caption: string;
   line: string;
   keyword: KeywordLine;
+  seconds: number;
 }) {
   const sceneByIndex = [
-    '세로 9:16. 손가락이 화면을 넘기려다 멈춘 순간.',
-    `${keyword.image}. 사람 표정은 살짝 지친 느낌.`,
-    '노트북 화면 위에 복잡한 글이 흩어져 있다.',
-    '복잡한 글이 카드 세 장으로 정리된다.',
-    '문나이트 화면을 보는 사람의 표정이 편해진다.',
-    '하얀 배경. 문나이트 이름과 작은 버튼 하나.',
-    '검색어, 글, 문의가 선 하나로 이어진다.',
-    '마지막 프레임. 자막이 크게 남는다.',
+    'a thumb stopping mid-swipe over a vertical phone screen',
+    `${keyword.image}, the person looks tired but alert`,
+    'a laptop screen overloaded with dense notes and tabs',
+    'messy research notes turning into three clean visual cards',
+    'a person calmly looking at a clean Moonlight-style research page',
+    'one clear action button on a simple product page',
+    'a keyword, a useful article, and a lead form connected by one thin line',
+    'a final clean frame with one small call-to-action button',
   ];
 
-  return humanizePrompt(
-    [
-      sceneByIndex[index] ?? sceneByIndex[sceneByIndex.length - 1],
-      `자막: "${caption}"`,
-      `느낌: ${line}`,
-      '색: 흰색, 검정, 청록 포인트.',
-      '물건은 적게. 글자는 크게. 바로 이해되게.',
-    ].join(' '),
-  );
+  return [
+    'GPT Image 2 prompt.',
+    `${sceneByIndex[index] ?? sceneByIndex[sceneByIndex.length - 1]}.`,
+    `Meaning of the spoken line: "${line}".`,
+    `Overlay caption later in Korean: "${caption}". Do not render any text inside the image.`,
+    `9:16 vertical composition for a YouTube Shorts cut, about ${seconds}s of screen time.`,
+    'Leave the bottom 25% clean and uncluttered for subtitles.',
+    'Clean Korean SaaS visual style, white and warm gray background, black text overlays added later, teal accent, realistic workspace details, few objects, strong focal point, no logo unless the product screen is abstract.',
+  ].join(' ');
+}
+
+function buildVideoPrompt({
+  index,
+  seconds,
+  line,
+  keyword,
+  beat,
+}: {
+  index: number;
+  seconds: number;
+  line: string;
+  keyword: KeywordLine;
+  beat: ScriptCut['beat'];
+}) {
+  const cameraByBeat: Record<ScriptCut['beat'], string> = {
+    hook: 'fast push-in, abrupt stop',
+    problem: 'slow handheld push-in',
+    insight: 'smooth match cut',
+    payoff: 'calm dolly-in',
+    cta: 'static locked-off ending frame',
+  };
+  const motionByIndex = [
+    'a thumb almost swipes away, then freezes',
+    `the ${keyword.object} feels crowded, then the subject looks up`,
+    'messy information spreads across the desk',
+    'the clutter snaps into three simple cards',
+    'the subject relaxes as the interface becomes clear',
+    'one small button remains on screen',
+    'a thin line connects keyword, content, and lead form',
+    'the frame settles into a clean ending shot',
+  ];
+
+  return [
+    'Higgsfield video prompt.',
+    `${seconds}s clip, 9:16 vertical.`,
+    `${motionByIndex[index] ?? motionByIndex[motionByIndex.length - 1]}.`,
+    `Camera: ${cameraByBeat[beat]}.`,
+    `Mood: direct, slightly tense at first, then clear and calm. Spoken line meaning: "${line}".`,
+    'No on-screen text generated in the video; Korean captions will be added later. Clean SaaS workspace, teal accent, soft realistic lighting.',
+  ].join(' ');
 }
 
 function buildVisualDirection(index: number, count: number) {
@@ -404,6 +482,7 @@ interface KeywordLine {
   spoken: string;
   pain: string;
   image: string;
+  object: string;
 }
 
 function getKeywordLine(keyword: TrendKeyword): KeywordLine {
@@ -417,7 +496,8 @@ function getKeywordLine(keyword: TrendKeyword): KeywordLine {
   return {
     spoken,
     pain: `${spoken}이 어려우면 바로 넘겨요.`,
-    image: `${spoken}이 크게 적힌 작은 카드`,
+    image: `a simple visual card representing ${spoken}`,
+    object: `${spoken} card`,
   };
 }
 
@@ -552,12 +632,25 @@ function isCutShape(value: unknown): value is ScriptCut {
   const candidate = value as Partial<ScriptCut>;
   return (
     typeof candidate.id === 'string' &&
+    isBeat(candidate.beat) &&
     typeof candidate.seconds === 'string' &&
     typeof candidate.spokenLine === 'string' &&
     typeof candidate.caption === 'string' &&
     typeof candidate.imagePrompt === 'string' &&
     candidate.imageModel === 'gpt-image-2' &&
+    typeof candidate.videoPrompt === 'string' &&
+    candidate.videoModel === 'higgsfield' &&
     typeof candidate.visualDirection === 'string'
+  );
+}
+
+function isBeat(value: unknown): value is ScriptCut['beat'] {
+  return (
+    value === 'hook' ||
+    value === 'problem' ||
+    value === 'insight' ||
+    value === 'payoff' ||
+    value === 'cta'
   );
 }
 

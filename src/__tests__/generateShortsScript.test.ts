@@ -38,8 +38,13 @@ describe('generateShortsScript', () => {
     expect(output.hook).toBeTruthy();
     expect(output.script).toContain('문나이트');
     expect(output.cuts).toHaveLength(6);
-    expect(output.cuts[0].imagePrompt).toContain('세로 9:16');
+    expect(output.cuts[0].beat).toBe('hook');
+    expect(output.cuts[0].imagePrompt).toContain('9:16 vertical');
+    expect(output.cuts[0].videoPrompt).toContain('Higgsfield');
     expect(output.cuts.every((cut) => cut.imageModel === 'gpt-image-2')).toBe(
+      true,
+    );
+    expect(output.cuts.every((cut) => cut.videoModel === 'higgsfield')).toBe(
       true,
     );
     expect(output.leadCta).toContain('문나이트');
@@ -94,7 +99,7 @@ describe('generateShortsScript', () => {
       revisionRequest: '초등학생도 읽게',
     });
 
-    expect(output.hook).toBe('검색했는데 더 헷갈리죠?');
+    expect(output.hook).toBe('찾았는데 더 헷갈리죠?');
     expect(output.script).toContain('어려운 말은 바로 넘겨요.');
   });
 

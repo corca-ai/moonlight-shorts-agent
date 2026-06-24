@@ -21,11 +21,14 @@ export interface ShortsScriptInput {
 
 export interface ScriptCut {
   id: string;
+  beat: 'hook' | 'problem' | 'insight' | 'payoff' | 'cta';
   seconds: string;
   spokenLine: string;
   caption: string;
   imagePrompt: string;
   imageModel: 'gpt-image-2';
+  videoPrompt: string;
+  videoModel: 'higgsfield';
   imageUrl?: string;
   imageError?: string;
   visualDirection: string;

@@ -33,6 +33,14 @@ const toneOptions = [
   '광고 티는 적게, 궁금증은 크게',
 ];
 
+const beatLabels: Record<string, string> = {
+  hook: 'HOOK',
+  problem: '문제',
+  insight: '반전',
+  payoff: '결과',
+  cta: 'CTA',
+};
+
 const defaultGoal =
   '문나이트 논문 리뷰 페이지를 더 많은 연구자와 마케터에게 알리고, 체험 문의로 이어지게 만들고 싶다.';
 
@@ -186,6 +194,28 @@ function App() {
   function useRevisionHint(hint: string) {
     setRevisionRequest(hint);
     void handleGenerate(hint);
+  }
+
+  function formatFullOutput(nextOutput: ShortsScriptOutput) {
+    return [
+      `# ${nextOutput.title}`,
+      '',
+      `훅: ${nextOutput.hook}`,
+      '',
+      nextOutput.cuts
+        .map((cut, index) =>
+          [
+            `## 컷 ${index + 1} · ${beatLabels[cut.beat] ?? cut.beat} · ${cut.seconds}`,
+            `대사: ${cut.spokenLine}`,
+            `자막: ${cut.caption}`,
+            `이미지(${cut.imageModel}): ${cut.imagePrompt}`,
+            `영상(${cut.videoModel}): ${cut.videoPrompt}`,
+          ].join('\n'),
+        )
+        .join('\n\n'),
+      '',
+      `CTA: ${nextOutput.leadCta}`,
+    ].join('\n');
   }
 
   return (
@@ -397,7 +427,7 @@ function App() {
                   onClick={() =>
                     void copyText(
                       'script',
-                      `${output.title}\n\n${output.script}\n\nCTA: ${output.leadCta}`,
+                      formatFullOutput(output),
                     )
                   }
                 >
@@ -425,19 +455,21 @@ function App() {
               <section className="output-section">
                 <div className="section-heading">
                   <Image size={17} aria-hidden="true" />
-                  <h3>대사 + 이미지 프롬프트</h3>
+                  <h3>대사 + 이미지 + 영상 프롬프트</h3>
                   <span>{output.cuts.length}컷</span>
                 </div>
                 <div className="cut-list">
-                  {output.cuts.map((cut) => (
+                  {output.cuts.map((cut, index) => (
                     <article key={cut.id} className="cut-row">
                       <div className="cut-meta">
                         <span>{cut.seconds}</span>
+                        <small>{beatLabels[cut.beat] ?? cut.beat}</small>
                         <strong>{cut.caption}</strong>
                       </div>
                       <div className="cut-body">
-                        <p>{cut.spokenLine}</p>
-                        <span className="model-chip">{cut.imageModel}</span>
+                        <p className="spoken-line">
+                          컷 {index + 1}. {cut.spokenLine}
+                        </p>
                         {cut.imageUrl ? (
                           <img
                             alt={cut.caption}
@@ -448,7 +480,14 @@ function App() {
                         {cut.imageError ? (
                           <p className="image-error">{cut.imageError}</p>
                         ) : null}
-                        <p className="prompt-text">{cut.imagePrompt}</p>
+                        <div className="prompt-block">
+                          <span className="model-chip">{cut.imageModel}</span>
+                          <p className="prompt-text">{cut.imagePrompt}</p>
+                        </div>
+                        <div className="prompt-block">
+                          <span className="model-chip video">{cut.videoModel}</span>
+                          <p className="prompt-text video">{cut.videoPrompt}</p>
+                        </div>
                         <p className="direction-text">{cut.visualDirection}</p>
                       </div>
                     </article>
