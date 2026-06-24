@@ -4,20 +4,20 @@
 
 ## 실행
 
-의존성은 처음 한 번만 설치합니다. 이후 실행/테스트/빌드는 `npx --no-install`로 로컬에 설치된 바이너리만 실행합니다.
+의존성은 처음 한 번만 설치합니다. 이후 실행/테스트/빌드는 `npx --no`로 로컬에 설치된 바이너리만 실행합니다.
 
 ```bash
 npm install
-npx --no-install vite --host 127.0.0.1
+npx --no vite --host 127.0.0.1
 ```
 
 ```bash
-npx --no-install vitest run
-npx --no-install tsc
-npx --no-install vite build
+npx --no vitest run
+npx --no tsc
+npx --no vite build
 ```
 
-`npx --no-install`을 쓰면 설치되지 않은 패키지를 즉석 다운로드해 실행하지 않으므로, 우발적인 원격 실행을 피할 수 있습니다.
+`npx --no`를 쓰면 설치되지 않은 패키지를 즉석 다운로드해 실행하지 않으므로, 우발적인 원격 실행을 피할 수 있습니다.
 
 ## API 키
 
