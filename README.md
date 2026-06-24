@@ -7,7 +7,7 @@
 의존성은 처음 한 번만 설치합니다. 이후 실행/테스트/빌드는 `npx --no`로 로컬에 설치된 바이너리만 실행합니다.
 
 ```bash
-npm install
+npm ci
 npx --no vite --host 127.0.0.1
 ```
 
