@@ -179,6 +179,57 @@ h3 {
   content: "";
 }
 
+.env-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.env-card {
+  display: grid;
+  gap: 5px;
+  min-height: 74px;
+  padding: 12px;
+  border: 1px solid #d8d3ca;
+  border-radius: 8px;
+  background: #fbfaf6;
+}
+
+.env-card strong {
+  color: #17201d;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.env-card span {
+  color: #66716c;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.env-card.is-ok {
+  border-color: #aac7bf;
+  background: #eff9f6;
+}
+
+.env-card.is-ok span {
+  color: #155d51;
+}
+
+.env-card.is-missing {
+  border-color: #e2a08d;
+  background: #fff0ec;
+}
+
+.env-card.is-missing span {
+  color: #7e2d1d;
+}
+
+.env-card.is-muted {
+  background: #f6f4ef;
+}
+
 .input-section,
 .output-section,
 .revision-panel {
@@ -339,6 +390,14 @@ textarea:focus {
   width: 17px;
   height: 17px;
   accent-color: #18736a;
+}
+
+.check-row.is-disabled {
+  color: #828b86;
+}
+
+.check-row.is-disabled input {
+  cursor: not-allowed;
 }
 
 .field-row > label,
@@ -680,6 +739,7 @@ textarea:focus {
   }
 
   .keyword-grid,
+  .env-status-grid,
   .support-grid,
   .cut-row {
     grid-template-columns: 1fr;

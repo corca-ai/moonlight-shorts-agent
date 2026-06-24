@@ -49,8 +49,6 @@ function App() {
     anthropicConfigured: false,
     openaiConfigured: false,
   });
-  const [anthropicApiKey, setAnthropicApiKey] = useState('');
-  const [openaiApiKey, setOpenaiApiKey] = useState('');
   const [shouldGenerateImages, setShouldGenerateImages] = useState(false);
   const [keywords, setKeywords] = useState<TrendKeyword[]>(sampleKeywords);
   const [selectedKeywordIds, setSelectedKeywordIds] = useState<string[]>([
@@ -109,7 +107,7 @@ function App() {
   }, []);
 
   const canGenerate =
-    (keyStatus.anthropicConfigured || anthropicApiKey.trim().length > 0) &&
+    keyStatus.anthropicConfigured &&
     selectedKeywordIds.length > 0 &&
     goal.trim().length > 0;
 
@@ -119,7 +117,7 @@ function App() {
 
     try {
       const result = await requestClaudeShortsScript({
-        anthropicApiKey,
+        anthropicApiKey: '',
         input: {
           selectedKeywords,
           goal,
@@ -134,12 +132,12 @@ function App() {
 
       if (
         shouldGenerateImages &&
-        (keyStatus.openaiConfigured || openaiApiKey.trim())
+        keyStatus.openaiConfigured
       ) {
         try {
           const cutsWithImages = await requestCutImages({
             cuts: result.cuts,
-            openaiApiKey,
+            openaiApiKey: '',
           });
           setOutput({
             ...result,
@@ -248,25 +246,38 @@ function App() {
           <section className="input-section">
             <div className="section-heading">
               <KeyRound size={17} aria-hidden="true" />
-              <h2>Claude Key</h2>
-              <span>{keyStatus.anthropicConfigured ? '.env OK' : 'Opus 4.8'}</span>
+              <h2>API 연결</h2>
+              <span>.env 전용</span>
             </div>
-            <label className="stacked-field">
-              <span>Anthropic API Key</span>
-              <input
-                type="password"
-                value={anthropicApiKey}
-                onChange={(event) => setAnthropicApiKey(event.target.value)}
-                placeholder="sk-ant-..."
-                autoComplete="off"
-                spellCheck={false}
-                aria-label="Anthropic API Key"
-              />
-            </label>
+            <div className="env-status-grid">
+              <div
+                className={`env-card ${
+                  keyStatus.anthropicConfigured ? 'is-ok' : 'is-missing'
+                }`}
+              >
+                <strong>Claude Opus 4.8</strong>
+                <span>
+                  {keyStatus.anthropicConfigured
+                    ? 'ANTHROPIC_API_KEY 연결됨'
+                    : 'ANTHROPIC_API_KEY 필요'}
+                </span>
+              </div>
+              <div
+                className={`env-card ${
+                  keyStatus.openaiConfigured ? 'is-ok' : 'is-muted'
+                }`}
+              >
+                <strong>GPT Image 2</strong>
+                <span>
+                  {keyStatus.openaiConfigured
+                    ? 'OPENAI_API_KEY 연결됨'
+                    : '프롬프트만 생성'}
+                </span>
+              </div>
+            </div>
             <p className="field-note">
-              {keyStatus.anthropicConfigured
-                ? '.env에 Claude 키가 있어 입력하지 않아도 됩니다.'
-                : '.env가 비어 있으면 여기 입력값을 요청에만 씁니다.'}
+              키는 화면에 입력하지 않고 로컬 `.env` 파일에서만 읽습니다. 저장 후
+              서버를 재시작하면 상태가 갱신됩니다.
             </p>
           </section>
 
@@ -276,30 +287,23 @@ function App() {
               <h2>이미지/영상</h2>
               <span>{keyStatus.openaiConfigured ? 'GPT OK' : 'prompt 기본'}</span>
             </div>
-            <label className="check-row">
+            <label
+              className={`check-row ${
+                keyStatus.openaiConfigured ? '' : 'is-disabled'
+              }`}
+            >
               <input
-                checked={shouldGenerateImages}
+                checked={shouldGenerateImages && keyStatus.openaiConfigured}
                 onChange={(event) => setShouldGenerateImages(event.target.checked)}
+                disabled={!keyStatus.openaiConfigured}
                 type="checkbox"
               />
               <span>대본과 함께 실제 이미지까지 생성</span>
             </label>
-            <label className="stacked-field">
-              <span>OpenAI API Key</span>
-              <input
-                type="password"
-                value={openaiApiKey}
-                onChange={(event) => setOpenaiApiKey(event.target.value)}
-                placeholder="sk-..."
-                autoComplete="off"
-                spellCheck={false}
-                aria-label="OpenAI API Key"
-              />
-            </label>
             <p className="field-note">
               {keyStatus.openaiConfigured
-                ? '.env에 OpenAI 키가 있어 입력하지 않아도 됩니다.'
-                : '키가 없어도 이미지 프롬프트와 영상 프롬프트는 같이 나옵니다.'}
+                ? '실제 이미지를 만들 수 있습니다. 프롬프트와 영상 프롬프트도 함께 나옵니다.'
+                : 'OPENAI_API_KEY를 .env에 넣으면 실제 이미지 생성이 활성화됩니다. 지금은 프롬프트만 나옵니다.'}
             </p>
           </section>
 

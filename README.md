@@ -33,9 +33,9 @@ OPENAI_API_KEY=sk-your-openai-key
 ## 범위
 
 - Claude Opus 4.8(`claude-opus-4-8`) 기반 대본 생성
-- 화면에서 Anthropic API Key 입력
-  - 키는 파일/브라우저 저장소에 저장하지 않고 로컬 프록시 요청에만 사용
-- 선택적으로 OpenAI API Key를 입력해 컷별 실제 이미지를 함께 생성
+- `.env`에서 Anthropic API Key 읽기
+  - 키 입력칸은 화면에 노출하지 않고 로컬 개발 서버에서만 읽음
+- 선택적으로 `.env`에 OpenAI API Key를 넣어 컷별 실제 이미지를 함께 생성
   - 모델은 `gpt-image-2`
   - 이미지 생성이 실패해도 대본과 이미지 프롬프트는 유지
 - 키워드 선택과 직접 키워드 입력
